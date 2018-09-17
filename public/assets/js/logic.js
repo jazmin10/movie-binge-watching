@@ -14,13 +14,14 @@ $(document).ready(() => {
 		// Otherwise, if a value was entered, then start the search
 		else {
 			$("#movie-input").val("");
+			userInput = userInput.replace(/ /g, "+"); // replace " " with "+"
 
 			searchMovie(userInput);
 		}
 	};
 
 	// Everytime the form input is focused, remove the form-error
-	// class (displays the field in red)
+	// class (the class displays the field in red)
 	let formFocus = () => {
 		$("#movie-input").removeClass("form-error");
 	};
@@ -32,7 +33,7 @@ $(document).ready(() => {
 			method: "GET"
 		}).then(response => {
 			// If we obtain results, then display the movie results
-			displayResults(response);
+			displaySearchResults(response);
 		}).catch(err => {
 			// If an error occurred, then alert user
 			alert("Oops! Something went wrong");
@@ -40,7 +41,7 @@ $(document).ready(() => {
 	};
 
 	// Displays top three results of the search
-	let displayResults = movieResults => {
+	let displaySearchResults = movieResults => {
 		$("#results-modal .modal-body").empty();
 
 		// If results are returned, then display top three results in the modal
@@ -59,10 +60,12 @@ $(document).ready(() => {
 				let button = $("<button>");
 
 				movieDiv.addClass("col-md-4 movie-result");
-				button.addClass("btn btn-primary");
+				button.addClass("btn btn-primary add-movie");
 
 				imgTag.attr("src", movies[i].Poster);
-				button.attr("type", "submit");
+				button.attr("data-title", movies[i].Title);
+				button.attr("data-year", movies[i].Year);
+				button.attr("data-img", movies[i].Poster);
 
 				titleDiv.text(movies[i].Title);
 				button.text("Add");
@@ -83,9 +86,22 @@ $(document).ready(() => {
 		$("#results-modal").modal("toggle");
 	};
 
+	let addMovie = (event) => {
+		
+		let movieInfo = {
+			title: $(event.target).attr("data-title"),
+			year: $(event.target).attr("data-year"),
+			img: $(event.target).attr("data-img")
+		};
+
+		console.log(movieInfo);
+
+	};
+
 
 // ====================== MAIN PROCESSES ======================
 
+	// Start movie search when search form is submitted
 	$("#search-form .btn").on("click", movieSearch);
 
 	// $("#search-form .btn").on("click", event => {
@@ -94,5 +110,9 @@ $(document).ready(() => {
 	// 	$("#results-modal").modal("toggle");
 	// })
 
+	// Removes "form-error" styling class when input field in search form is focused
 	$("#movie-input").focus(formFocus);
+
+	// Adds movie selected from search results
+	$("#search-results").on("click", ".add-movie", addMovie);
 });

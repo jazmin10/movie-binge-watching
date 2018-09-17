@@ -20,12 +20,14 @@
 
 </head>
 <body>
+
+	<!-- JUMBOTRON -->
 	<div class="jumbotron">
 	  <h1 class="display-4">Movie Binge Watching</h1>
 	  <p class="lead">Add the movies you need to binge watch.</p>
 	  <hr class="my-4">
 
-
+		<!-- SEARCH FORM -->
 	  <form id="search-form">
 		  <div class="form-row align-items-center">
 		    <div class="col-md-5">
@@ -39,15 +41,20 @@
 		</form>
 	</div>
 
+	<!-- MODAL -->
 	<div class="modal fade" id="results-modal" tabindex="-1" role="dialog">
 	  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 	    <div class="modal-content">
+
+	    	<!-- MODAL HEADER -->
 	      <div class="modal-header">
 	        <h5 class="modal-title" id="exampleModalCenterTitle">Results:</h5>
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
 	      </div>
+
+	      <!-- MODAL BODY -->
 	      <div class="modal-body" id="search-results">
 
 					<!-- <div class="row">
@@ -72,12 +79,49 @@
 
 
 	      </div>
-	      <div class="modal-footer">
+
+	      <!-- MODAL FOOTER -->
+	      <!-- <div class="modal-footer">
 	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 	        <button type="button" class="btn btn-primary">Save changes</button>
-	      </div>
+	      </div> -->
 	    </div>
 	  </div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="card">
+				  <div class="card-body">
+				  	<div class="row">
+				  	<div class="col-md-3">
+							<img src="https://m.media-amazon.com/images/M/MV5BMTQ1MjQwMTE5OF5BMl5BanBnXkFtZTgwNjk3MTcyMDE@._V1_SX300.jpg">
+						</div>
+						<div class="col-md-9">
+							<h3>Frozen</h3>
+							<p>Comments:</p>
+							<p>Best movie ever</p>
+				  	</div>
+				  </div>
+				  </div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="card">
+				  <div class="card-body">
+				  	<div>
+							<img src="https://m.media-amazon.com/images/M/MV5BMTQ1MjQwMTE5OF5BMl5BanBnXkFtZTgwNjk3MTcyMDE@._V1_SX300.jpg">
+						</div>
+						<div>
+							<h3>Frozen</h3>
+							<p>Comments:</p>
+							<p>Best movie ever</p>
+				  	</div>
+				  </div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </body>

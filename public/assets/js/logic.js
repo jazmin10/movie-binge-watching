@@ -46,31 +46,50 @@ $(document).ready(() => {
 
 		// If results are returned, then display top three results in the modal
 		if (movieResults.Response === "True") {
-			let movieCount = 3;
 			let movies = movieResults.Search;
+			let movieCount = movies.length;
+
+			if (movies.length >= 3) {
+				movieCount = 3;
+			}
 
 			let row = $("<div>");
 			row.addClass("row");
 
-			// For the top three results, display movie title, poster, and add button
+			// For movie results: display movie title, poster, and add button
 			for (var i = 0; i < movieCount; i++) {
+				
+				// Create html elements
 				let movieDiv = $("<div>");
 				let titleDiv = $("<h5>");
 				let imgTag = $("<img>");
 				let button = $("<button>");
 
-				movieDiv.addClass("col-md-4 movie-result");
+				// Adding classes
+				movieDiv.addClass(`movie-result col-md-${12 / movieCount}`);
 				button.addClass("btn btn-primary add-movie");
 
-				imgTag.attr("src", movies[i].Poster);
+				// Adding attributes to html tags
+				if (movies[i].Poster === "N/A") {
+					imgTag.attr("src", "https://www.movieinsider.com/images/none_175px.jpg");
+				}
+				else {
+					imgTag.attr("src", movies[i].Poster);
+				}
+				
+				imgTag.attr("alt", "No movie poster found");
 				button.attr("data-title", movies[i].Title);
 				button.attr("data-year", movies[i].Year);
 				button.attr("data-img", movies[i].Poster);
 
+				// Add text 
 				titleDiv.text(movies[i].Title);
 				button.text("Add");
 
-				movieDiv.append(titleDiv).append(imgTag).append(button);
+				// Append elements
+				movieDiv.append(titleDiv)
+								.append(imgTag)
+								.append(button);
 
 				row.append(movieDiv);
 			}
@@ -94,7 +113,14 @@ $(document).ready(() => {
 			img: $(event.target).attr("data-img")
 		};
 
-		console.log(movieInfo);
+		$.ajax({
+			url: "/api/new",
+			method: "POST",
+			contentType: "application/json",
+			data: JSON.stringify(movieInfo)
+		}).then(response => {
+			// $("#results-modal").modal("hide");
+		});
 
 	};
 

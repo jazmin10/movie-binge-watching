@@ -113,19 +113,96 @@ $(document).ready(() => {
 			img: $(event.target).attr("data-img")
 		};
 
+		// Save movie information to the database
 		$.ajax({
 			url: "/api/new",
 			method: "POST",
 			contentType: "application/json",
 			data: JSON.stringify(movieInfo)
 		}).then(response => {
-			// $("#results-modal").modal("hide");
+			// and then hide modal and grab new list of movies saved
+			$("#results-modal").modal("hide");
+			moviesSaved();
 		});
 
 	};
 
+	let moviesSaved = () => {
+		// Retrieve list of movies saved in database
+		$.ajax({
+			url: "/api/all",
+			method: "GET"
+		}).then(response => {
+			// and then display list of movies
+			displaySavedMovies(response);
+		});
+	};
+
+
+	let displaySavedMovies = movies => {
+		$(".container").empty();
+		
+		// Display list of movies by...
+		for (var i = 0; i < movies.length; i++) {
+			
+			// creating a row for every two movies
+			// or create a row when you hit an even number
+			if (i % 2 === 0) {
+				let row = $("<div>");
+				// give each row a row number starting with 0
+				row.addClass(`row row-${Math.floor(i / 2)}`);
+
+				$(".container").append(row);
+			}
+
+			// create html elements for a each movie
+			let colDiv = $("<div>");
+			let cardDiv = $("<div>");
+			let cardBodyDiv = $("<div>");
+			let imgDiv = $("<div>");
+			let infoDiv = $("<div>");
+			let imgTag = $("<img>");
+			let titleTag = $("<h3>");
+			let commentsTitleTag = $("<p>");
+			let commentsTag = $("<p>");
+
+			// Add classes to elements
+			colDiv.addClass("col-md-6");
+			cardDiv.addClass("card");
+			cardBodyDiv.addClass("card-body");
+
+			// Add attributes
+			imgTag.attr("src", movies[i].img); // movie poster
+
+			// Add text
+			titleTag.text(movies[i].title); // movie name
+			commentsTitleTag.text("Comments:"); 
+			commentsTag.text(movies[i].comments); // movie comments
+
+			// Append elements
+			imgDiv.append(imgTag); 
+
+			infoDiv.append(titleTag)
+				.append(commentsTitleTag)
+				.append(commentsTag);
+
+			cardBodyDiv.append(imgDiv)
+				.append(infoDiv);
+
+			cardDiv.append(cardBodyDiv);
+			colDiv.append(cardDiv);
+
+			// append movie div to it's row
+			$(`.row-${Math.floor(i / 2)}`).append(colDiv);
+
+		}
+	};
+
 
 // ====================== MAIN PROCESSES ======================
+
+	// On initial load, grab movies saved in database
+	moviesSaved();
 
 	// Start movie search when search form is submitted
 	$("#search-form .btn").on("click", movieSearch);
@@ -141,4 +218,5 @@ $(document).ready(() => {
 
 	// Adds movie selected from search results
 	$("#search-results").on("click", ".add-movie", addMovie);
+
 });

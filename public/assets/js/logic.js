@@ -141,7 +141,7 @@ $(document).ready(() => {
 
 	let displaySavedMovies = movies => {
 		$(".container").empty();
-		
+
 		// Display list of movies by...
 		for (var i = 0; i < movies.length; i++) {
 			
@@ -159,8 +159,10 @@ $(document).ready(() => {
 			let colDiv = $("<div>");
 			let cardDiv = $("<div>");
 			let cardBodyDiv = $("<div>");
+			let iconDiv = $("<div>");
 			let imgDiv = $("<div>");
 			let infoDiv = $("<div>");
+			let iconTag = $("<i>");
 			let imgTag = $("<img>");
 			let titleTag = $("<h3>");
 			let commentsTitleTag = $("<p>");
@@ -170,8 +172,11 @@ $(document).ready(() => {
 			colDiv.addClass("col-md-6");
 			cardDiv.addClass("card");
 			cardBodyDiv.addClass("card-body");
+			iconTag.addClass("fas fa-check-circle viewed-icon");
 
 			// Add attributes
+			iconTag.attr("data-viewed", movies[i].viewed.toString());
+			iconTag.attr("data-id", movies[i].id);
 			imgTag.attr("src", movies[i].img); // movie poster
 
 			// Add text
@@ -180,13 +185,16 @@ $(document).ready(() => {
 			commentsTag.text(movies[i].comments); // movie comments
 
 			// Append elements
+			iconDiv.append(iconTag);
+
 			imgDiv.append(imgTag); 
 
 			infoDiv.append(titleTag)
 				.append(commentsTitleTag)
 				.append(commentsTag);
 
-			cardBodyDiv.append(imgDiv)
+			cardBodyDiv.append(iconDiv)
+				.append(imgDiv)
 				.append(infoDiv);
 
 			cardDiv.append(cardBodyDiv);
@@ -196,6 +204,36 @@ $(document).ready(() => {
 			$(`.row-${Math.floor(i / 2)}`).append(colDiv);
 
 		}
+	};
+
+	let movieViewStatus = (event) => {
+		// Store current viewed and id values of the movie selected
+		let viewedStatus = $(event.target).attr("data-viewed");
+		let movieId = $(event.target).attr("data-id");
+
+		// Turn viewedStatus value to a boolean and 
+		// to the new viewed value it needs to be updated to
+		if (viewedStatus === "true") {
+			viewedStatus = false;
+		}
+		else {
+			viewedStatus = true;
+		}
+
+		let movieUpdate = {
+			viewed: viewedStatus
+		};
+
+		// Update the viewed status in the db
+		$.ajax({
+			url: `/api/view/${movieId}`,
+			method: "PUT",
+			data: movieUpdate
+		}).then(response => {
+			// and then update the "data-viewed" attribute to the new viewed value
+			console.log("viewed status updated");
+			$(event.target).attr("data-viewed", viewedStatus.toString());		
+		});
 	};
 
 
@@ -218,5 +256,8 @@ $(document).ready(() => {
 
 	// Adds movie selected from search results
 	$("#search-results").on("click", ".add-movie", addMovie);
+
+	// Updates viewed status of a movie
+	$("#movies-saved-list").on("click", ".viewed-icon", movieViewStatus);
 
 });

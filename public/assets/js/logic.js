@@ -184,21 +184,24 @@ $(document).ready(() => {
 			buttonTag.attr("type", "button");
 			buttonTag.attr("data-id", movies[i].id); // movie id
 
+			// Display "Watch" or "Watched" text when hovering over icon
+			if (movies[i].viewed) {
+				iconTag.attr("title", "Watch");
+			}
+			else {
+				iconTag.attr("title", "Watched")
+			}
+
 			// Add text
 			titleTag.text(movies[i].title); // movie name
 			commentsTitleTag.text("Comments:"); 
 			commentsTag.text(movies[i].comments); // movie comments
-			// buttonTag.text("Remove");
-
-			// Add html
-			// buttonSpan.html(`<i class="fas fa-trash-alt"></i>`);
+			buttonSpan.text("Remove");
 
 			buttonTag.html(`<i class="fas fa-trash-alt"></i>`);
-			buttonSpan.text("Remove");
-			buttonTag.append(buttonSpan);
 
 			// Append elements
-			// buttonTag.append(buttonSpan);
+			buttonTag.append(buttonSpan);
 
 			iconDiv.append(iconTag);
 

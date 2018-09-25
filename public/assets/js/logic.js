@@ -145,17 +145,17 @@ $(document).ready(() => {
 		// Display list of movies by...
 		for (var i = 0; i < movies.length; i++) {
 			
-			// creating a row for every two movies
-			// or create a row when you hit an even number
+			// creating a row for every two movies OR
+			// creating a row everytime you hit an even number
 			if (i % 2 === 0) {
 				let row = $("<div>");
-				// give each row a row number starting with 0
+				// give each row a number starting with 0
 				row.addClass(`row row-${Math.floor(i / 2)}`);
 
 				$(".container").append(row);
 			}
 
-			// create html elements for a each movie
+			// create html elements for each movie
 			let colDiv = $("<div>");
 			let cardDiv = $("<div>");
 			let cardBodyDiv = $("<div>");
@@ -167,31 +167,47 @@ $(document).ready(() => {
 			let titleTag = $("<h3>");
 			let commentsTitleTag = $("<p>");
 			let commentsTag = $("<p>");
+			let buttonTag = $("<button>");
+			let buttonSpan = $("<span>");
 
 			// Add classes to elements
 			colDiv.addClass("col-md-6");
 			cardDiv.addClass("card");
 			cardBodyDiv.addClass("card-body");
 			iconTag.addClass("fas fa-check-circle viewed-icon");
+			buttonTag.addClass("btn btn-secondary remove-movie");
 
 			// Add attributes
-			iconTag.attr("data-viewed", movies[i].viewed.toString());
-			iconTag.attr("data-id", movies[i].id);
+			iconTag.attr("data-viewed", movies[i].viewed.toString()); // movie viewed status
+			iconTag.attr("data-id", movies[i].id); // movie id
 			imgTag.attr("src", movies[i].img); // movie poster
+			buttonTag.attr("type", "button");
+			buttonTag.attr("data-id", movies[i].id); // movie id
 
 			// Add text
 			titleTag.text(movies[i].title); // movie name
 			commentsTitleTag.text("Comments:"); 
 			commentsTag.text(movies[i].comments); // movie comments
+			// buttonTag.text("Remove");
+
+			// Add html
+			// buttonSpan.html(`<i class="fas fa-trash-alt"></i>`);
+
+			buttonTag.html(`<i class="fas fa-trash-alt"></i>`);
+			buttonSpan.text("Remove");
+			buttonTag.append(buttonSpan);
 
 			// Append elements
+			// buttonTag.append(buttonSpan);
+
 			iconDiv.append(iconTag);
 
 			imgDiv.append(imgTag); 
 
 			infoDiv.append(titleTag)
 				.append(commentsTitleTag)
-				.append(commentsTag);
+				.append(commentsTag)
+				.append(buttonTag);
 
 			cardBodyDiv.append(iconDiv)
 				.append(imgDiv)
@@ -236,6 +252,24 @@ $(document).ready(() => {
 		});
 	};
 
+	let removeMovie = event => {
+		// Store the movie id of the selected movie
+			// using event.currentTarget instead of event.target since we
+			// have various elements within the button tag
+			// event.currentTag: the current DOM element within the event bubbling phase
+			// event.target: the DOM element that initiated the event
+		let movieId = $(event.currentTarget).attr("data-id");
+
+		// Send delete request
+		$.ajax({
+			url: `/api/delete/${movieId}`,
+			method: "DELETE"
+		}).then(response => {
+			// and then update #movies-saved-list 
+			moviesSaved();
+		});
+	};
+
 
 // ====================== MAIN PROCESSES ======================
 
@@ -259,5 +293,8 @@ $(document).ready(() => {
 
 	// Updates viewed status of a movie
 	$("#movies-saved-list").on("click", ".viewed-icon", movieViewStatus);
+
+	// Remove movie from the list
+	$("#movies-saved-list").on("click", ".remove-movie", removeMovie);
 
 });

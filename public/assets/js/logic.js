@@ -138,6 +138,54 @@ $(document).ready(() => {
 		});
 	};
 
+	// Returns card component html for each movie
+	let createMovieCard = currentMovie => {
+
+		let beginningCard = [
+			`<div class="col-md-6">`,
+			`<div class="card">`,
+			`<div class="card-body">`,
+			`<div class="icon-section">`
+			];
+
+		// If the movie has been watched: push check mark icon with class of "watched" to the array
+		if (currentMovie.viewed) {
+			beginningCard.push(`<i class="fa fa-check-circle viewed-icon watched" 
+				title="watch" data-id=${currentMovie.id} data-viewed=${currentMovie.viewed.toString()}></i>`);
+		}
+		// Otherwise, push the check mark icon without the "watched" class
+		else {
+			beginningCard.push(`<i class="fa fa-check-circle viewed-icon" 
+				title="watched" data-id=${currentMovie.id} data-viewed=${currentMovie.viewed.toString()}></i>`);
+		}
+
+		let restOfCard = [
+			`</div>`,
+			`<div class="poster-section">`,
+			`<img src=${currentMovie.img}>`,
+			`</div>`,
+			`<div class="info-section">`,
+			`<h3>${currentMovie.title}</h3>`,
+			`<p>Comments:</p>`,
+			`<p>${currentMovie.comments}</p>`,
+			`<button class="btn btn-secondary remove-movie" type="button" data-id=${currentMovie.id}>`,
+			`<i class="fas fa-trash-alt"></i>`,
+			`<span>Remove</span>`,
+			`</button>`,
+			`</div>`,
+			`</div>`,
+			`</div>`,
+			`</div>`
+		];
+
+		// concatenate the beginningCard array and the restOfCard array
+		let fullCard = beginningCard.concat(restOfCard);
+
+		// Join array elements into a string
+		return fullCard.join("");
+
+	};
+
 
 	let displaySavedMovies = movies => {
 		$(".container").empty();
@@ -155,73 +203,11 @@ $(document).ready(() => {
 				$(".container").append(row);
 			}
 
-			// create html elements for each movie
-			let colDiv = $("<div>");
-			let cardDiv = $("<div>");
-			let cardBodyDiv = $("<div>");
-			let iconDiv = $("<div>");
-			let imgDiv = $("<div>");
-			let infoDiv = $("<div>");
-			let iconTag = $("<i>");
-			let imgTag = $("<img>");
-			let titleTag = $("<h3>");
-			let commentsTitleTag = $("<p>");
-			let commentsTag = $("<p>");
-			let buttonTag = $("<button>");
-			let buttonSpan = $("<span>");
+			// create movie card component for each movie
+			let movieCard = createMovieCard(movies[i]);
 
-			// Add classes to elements
-			colDiv.addClass("col-md-6");
-			cardDiv.addClass("card");
-			cardBodyDiv.addClass("card-body");
-			iconTag.addClass("fas fa-check-circle viewed-icon");
-			buttonTag.addClass("btn btn-secondary remove-movie");
-
-			// Add attributes
-			iconTag.attr("data-viewed", movies[i].viewed.toString()); // movie viewed status
-			iconTag.attr("data-id", movies[i].id); // movie id
-			imgTag.attr("src", movies[i].img); // movie poster
-			buttonTag.attr("type", "button");
-			buttonTag.attr("data-id", movies[i].id); // movie id
-
-			// Display "Watch" or "Watched" text when hovering over icon
-			if (movies[i].viewed) {
-				iconTag.attr("title", "Watch");
-				iconTag.addClass("watched");
-			}
-			else {
-				iconTag.attr("title", "Watched");
-			}
-
-			// Add text
-			titleTag.text(movies[i].title); // movie name
-			commentsTitleTag.text("Comments:"); 
-			commentsTag.text(movies[i].comments); // movie comments
-			buttonSpan.text("Remove");
-
-			buttonTag.html(`<i class="fas fa-trash-alt"></i>`);
-
-			// Append elements
-			buttonTag.append(buttonSpan);
-
-			iconDiv.append(iconTag);
-
-			imgDiv.append(imgTag); 
-
-			infoDiv.append(titleTag)
-				.append(commentsTitleTag)
-				.append(commentsTag)
-				.append(buttonTag);
-
-			cardBodyDiv.append(iconDiv)
-				.append(imgDiv)
-				.append(infoDiv);
-
-			cardDiv.append(cardBodyDiv);
-			colDiv.append(cardDiv);
-
-			// append movie div to it's row
-			$(`.row-${Math.floor(i / 2)}`).append(colDiv);
+			// append movie cards to it's row
+			$(`.row-${Math.floor(i / 2)}`).append(movieCard);
 
 		}
 	};
@@ -256,10 +242,12 @@ $(document).ready(() => {
 			// if the movie was watched, then add "watched" class (turn icon green)
 			if (viewedStatus) {
 				$(event.target).addClass("watched");
+				$(event.target).attr("title", "watch");
 			}
 			// otherwise, remove class (turn icon black)
 			else {
 				$(event.target).removeClass("watched");
+				$(event.target).attr("title", "watched");
 			}
 		});
 	};

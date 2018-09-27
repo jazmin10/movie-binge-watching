@@ -13,3 +13,7 @@
 #search-results .movie-result img {
 	width: 100%;
 }
+
+.viewed-icon.watched {
+	color: green;
+}

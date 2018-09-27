@@ -187,9 +187,10 @@ $(document).ready(() => {
 			// Display "Watch" or "Watched" text when hovering over icon
 			if (movies[i].viewed) {
 				iconTag.attr("title", "Watch");
+				iconTag.addClass("watched");
 			}
 			else {
-				iconTag.attr("title", "Watched")
+				iconTag.attr("title", "Watched");
 			}
 
 			// Add text
@@ -250,8 +251,16 @@ $(document).ready(() => {
 			data: movieUpdate
 		}).then(response => {
 			// and then update the "data-viewed" attribute to the new viewed value
-			console.log("viewed status updated");
-			$(event.target).attr("data-viewed", viewedStatus.toString());		
+			$(event.target).attr("data-viewed", viewedStatus.toString());	
+
+			// if the movie was watched, then add "watched" class (turn icon green)
+			if (viewedStatus) {
+				$(event.target).addClass("watched");
+			}
+			// otherwise, remove class (turn icon black)
+			else {
+				$(event.target).removeClass("watched");
+			}
 		});
 	};
 

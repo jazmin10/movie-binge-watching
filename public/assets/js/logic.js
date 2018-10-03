@@ -20,13 +20,12 @@ $(document).ready(() => {
 		}
 	};
 
-	// Everytime the form input is focused, remove the form-error
-	// class (the class displays the field in red)
+	// Removes the form-error class (the class displays the field in red)
 	let formFocus = () => {
 		$("#movie-input").removeClass("form-error");
 	};
 
-	// Obtain search results
+	// Send request to OMDB API to obtain movie search results
 	let searchMovie = movieName => {
 		$.ajax({
 			url: `http://www.omdbapi.com/?apikey=4b1d9a31&type=movie&r=json&page=1&s=${movieName}`,
@@ -40,15 +39,17 @@ $(document).ready(() => {
 		});
 	};
 
-	// Displays top three results of the search
+	// Displays up to three search results in the modal
 	let displaySearchResults = movieResults => {
 		$("#results-modal .modal-body").empty();
 
-		// If results are returned, then display top three results in the modal
+		// If search results are returned, then display 
+		// movies' title, poster, and add button
 		if (movieResults.Response === "True") {
 			let movies = movieResults.Search;
 			let movieCount = movies.length;
 
+			// Limit search results to top 3
 			if (movies.length >= 3) {
 				movieCount = 3;
 			}
@@ -56,7 +57,6 @@ $(document).ready(() => {
 			let row = $("<div>");
 			row.addClass("row");
 
-			// For movie results: display movie title, poster, and add button
 			for (var i = 0; i < movieCount; i++) {
 				
 				// Create html elements
@@ -71,6 +71,7 @@ $(document).ready(() => {
 
 				// Adding attributes to html tags
 				if (movies[i].Poster === "N/A") {
+					// placeholder picture
 					imgTag.attr("src", "https://www.movieinsider.com/images/none_175px.jpg");
 				}
 				else {
@@ -105,6 +106,7 @@ $(document).ready(() => {
 		$("#results-modal").modal("toggle");
 	};
 
+	// Save new movie to the list of saved movies in the database
 	let addMovie = (event) => {
 		
 		let movieInfo = {
@@ -113,7 +115,6 @@ $(document).ready(() => {
 			img: $(event.target).attr("data-img")
 		};
 
-		// Save movie information to the database
 		$.ajax({
 			url: "/api/new",
 			method: "POST",
@@ -127,13 +128,13 @@ $(document).ready(() => {
 
 	};
 
+	// Retrieve list of saved movies from database
 	let moviesSaved = () => {
-		// Retrieve list of movies saved in database
 		$.ajax({
 			url: "/api/all",
 			method: "GET"
 		}).then(response => {
-			// and then display list of movies
+			// and then display list of saved movies
 			displaySavedMovies(response);
 		});
 	};
@@ -188,7 +189,7 @@ $(document).ready(() => {
 
 	};
 
-
+	// Display list of saved movies
 	let displaySavedMovies = movies => {
 		$("#movies-saved-list").empty();
 
@@ -214,8 +215,9 @@ $(document).ready(() => {
 		}
 	};
 
+	// Updates movie's watch/unwatched status along with check mark
 	let movieViewStatus = (event) => {
-		// Store current viewed and id values of the movie selected
+		
 		let viewedStatus = $(event.target).attr("data-viewed");
 		let movieId = $(event.target).attr("data-id");
 
@@ -232,7 +234,6 @@ $(document).ready(() => {
 			viewed: viewedStatus
 		};
 
-		// Update the viewed status in the db
 		$.ajax({
 			url: `/api/view/${movieId}`,
 			method: "PUT",
@@ -254,31 +255,29 @@ $(document).ready(() => {
 		});
 	};
 
+	// Removes movies from list of saved movies
 	let removeMovie = event => {
-		// Store the movie id of the selected movie
-			// using event.currentTarget instead of event.target since we
-			// have various elements within the button tag
-			// event.currentTag: the current DOM element within the event bubbling phase
-			// event.target: the DOM element that initiated the event
+		// using event.currentTarget instead of event.target since we
+		// have various elements within the button tag
+		// event.currentTag: the current DOM element within the event bubbling phase
+		// event.target: the DOM element that initiated the event
 		let movieId = $(event.currentTarget).attr("data-id");
 
-		// Send delete request
 		$.ajax({
 			url: `/api/delete/${movieId}`,
 			method: "DELETE"
 		}).then(response => {
-			// and then update #movies-saved-list 
+			// and then update list of saved movies
 			moviesSaved();
 		});
 	};
 
-	// Displays textarea in order to edit comments
+	// Displays comments' edit form of a movie
 	let editComments = event => {
 		// Store the p tag of the comments selected
 		let comments = $(event.target);
 		// Store the targeted movie's .info-section div
 		let movieInfoSection = comments.parent();
-
 		// Target the textarea tag of the .info-section
 		let commentsEditing = movieInfoSection.children(".edit-comments");
 
@@ -292,6 +291,7 @@ $(document).ready(() => {
 
 	};
 
+	// Save new comments after editing is finished
 	let finishEditingComments = event => {
 
 		// When a user presses "enter" key is released...
@@ -311,42 +311,33 @@ $(document).ready(() => {
 		}
 	};
 
-	// let cancelEditComments = () => {
-	// 	console.log("cancel");
-	// };
-
 // ====================== MAIN PROCESSES ======================
 
-	// On initial load, grab movies saved in database
+	// On initial load, grab list of saved movies
 	moviesSaved();
 
-	// Start movie search when search form is submitted
+	// When the search form is submitted...
 	$("#search-form .btn").on("click", movieSearch);
 
-	// $("#search-form .btn").on("click", event => {
-	// 	event.preventDefault();
-
-	// 	$("#results-modal").modal("toggle");
-	// })
-
-	// Removes "form-error" styling class when input field in search form is focused
+	// When the input field in the search form is focused...
 	$("#movie-input").focus(formFocus);
 
-	// Adds movie selected from search results
+	// When an add button is clicked in the search results modal...
 	$("#search-results").on("click", ".add-movie", addMovie);
 
-	// Updates viewed status of a movie
+	// When a check mark icon on the list of saved movies is clicked...
 	$("#movies-saved-list").on("click", ".viewed-icon", movieViewStatus);
 
-	// Remove movie from the list
+	// When a remove button on the list of saved movies is clicked...
 	$("#movies-saved-list").on("click", ".remove-movie", removeMovie);
 
-	// Edit comments of a movie
+	// When a comments section on the list of saved movies is clicked...
 	$("#movies-saved-list").on("click", ".comments-text", editComments);
 
-	// Finish editing comments of a movie
+	// When a key is pressed and released in the comments' edit form...
 	$("#movies-saved-list").on("keyup", ".edit-comments", finishEditingComments);
 
+	// When the comments' edit form is unfocused...
 	$("#movies-saved-list").on("blur", ".edit-comments", moviesSaved);
 
 });

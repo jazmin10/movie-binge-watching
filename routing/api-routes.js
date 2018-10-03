@@ -53,6 +53,10 @@
 		// Store the id of the movie from the request url
 		let { id } = request.params;
 
+		if (!comments) {
+			comments = "None";
+		}
+
 		let newValue = { comments: comments };
 		let condition = { where: { id: id }};
 

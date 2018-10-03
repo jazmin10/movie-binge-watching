@@ -167,7 +167,9 @@ $(document).ready(() => {
 			`<div class="info-section">`,
 			`<h3>${currentMovie.title}</h3>`,
 			`<p>Comments:</p>`,
-			`<p>${currentMovie.comments}</p>`,
+			`<textarea type="text" class="form-control edit-comments" 
+				style="display: none;" rows="3" data-id=${currentMovie.id}></textarea>`,
+			`<p title="edit" class="comments-text">${currentMovie.comments}</p>`,
 			`<button class="btn btn-secondary remove-movie" type="button" data-id=${currentMovie.id}>`,
 			`<i class="fas fa-trash-alt"></i>`,
 			`<span>Remove</span>`,
@@ -188,7 +190,7 @@ $(document).ready(() => {
 
 
 	let displaySavedMovies = movies => {
-		$(".container").empty();
+		$("#movies-saved-list").empty();
 
 		// Display list of movies by...
 		for (var i = 0; i < movies.length; i++) {
@@ -200,7 +202,7 @@ $(document).ready(() => {
 				// give each row a number starting with 0
 				row.addClass(`row row-${Math.floor(i / 2)}`);
 
-				$(".container").append(row);
+				$("#movies-saved-list").append(row);
 			}
 
 			// create movie card component for each movie
@@ -270,6 +272,48 @@ $(document).ready(() => {
 		});
 	};
 
+	// Displays textarea in order to edit comments
+	let editComments = event => {
+		// Store the p tag of the comments selected
+		let comments = $(event.target);
+		// Store the targeted movie's .info-section div
+		let movieInfoSection = comments.parent();
+
+		// Target the textarea tag of the .info-section
+		let commentsEditing = movieInfoSection.children(".edit-comments");
+
+		// Hide the comments...
+		comments.hide();
+
+		// And display the textarea focused with the comments
+		commentsEditing.val(comments.text());
+		commentsEditing.show();
+		commentsEditing.focus();
+
+	};
+
+	let finishEditingComments = event => {
+
+		// When a user presses "enter" key is released...
+		if (event.keyCode === 13) {
+			// Store new comments
+			let newComments = {
+				comments: $(event.target).val().trim()
+			};
+			let movieId = $(event.target).attr("data-id");
+			
+			$.ajax({
+				url: `/api/comments/${movieId}`,
+				method: `PUT`,
+				contentType: "application/json",
+				data: JSON.stringify(newComments)
+			}).then(moviesSaved);
+		}
+	};
+
+	// let cancelEditComments = () => {
+	// 	console.log("cancel");
+	// };
 
 // ====================== MAIN PROCESSES ======================
 
@@ -296,5 +340,13 @@ $(document).ready(() => {
 
 	// Remove movie from the list
 	$("#movies-saved-list").on("click", ".remove-movie", removeMovie);
+
+	// Edit comments of a movie
+	$("#movies-saved-list").on("click", ".comments-text", editComments);
+
+	// Finish editing comments of a movie
+	$("#movies-saved-list").on("keyup", ".edit-comments", finishEditingComments);
+
+	$("#movies-saved-list").on("blur", ".edit-comments", moviesSaved);
 
 });

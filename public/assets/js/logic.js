@@ -8,7 +8,7 @@ $(document).ready(() => {
 		let userInput = $(`#movie-input`).val().trim();
 
 		// If a blank form was entered, then mark input form "red"
-		if (userInput === ``) {
+		if (!userInput) {
 			$(`#movie-input`).addClass(`form-error`);
 		}
 		// Otherwise, if a value was entered, then start the search
@@ -40,18 +40,19 @@ $(document).ready(() => {
 	};
 
 	// Displays up to three search results in the modal
-	let displaySearchResults = movieResults => {
+	let displaySearchResults = (movieResults, maxResults = 3) => {
 		$(`#results-modal .modal-body`).empty();
-
+		
 		// If search results are returned, then display 
 		// movies' title, poster, and add button
 		if (movieResults.Response === `True`) {
 			let movies = movieResults.Search;
-			let movieCount = movies.length;
+			let movieCount = maxResults;
 
-			// Limit search results to top 3
-			if (movies.length >= 3) {
-				movieCount = 3;
+			// If search results are less than maxResults number,
+			// then set movieCount to number of searchs
+			if (movies.length < maxResults) {
+				movieCount = movies.length;
 			}
 
 			let row = $(`<div>`);

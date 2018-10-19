@@ -17,13 +17,8 @@
 
 	let addMovie = (request, response) => {
 		// Store title, year, and img values from the body of the request
-		let {title, year, img} = request.body;
-
-		let movie = {
-			title: title,
-			year: year,
-			img: img
-		};
+		let { title, year, img } = request.body;
+		let movie = { title, year, img };
 
 		// Add movie to the db and respond with the new row values
 		Movie.create(movie).then(results => {
@@ -38,7 +33,7 @@
 		let { id } = request.params;
 
 		let newValue = { viewed: viewed };
-		let condition = { where: { id: id } };
+		let condition = { where: { id } };
 
 		// Update the viewed value of the specified movie
 		// and respond with number of affected rows
@@ -58,7 +53,7 @@
 		}
 
 		let newValue = { comments: comments };
-		let condition = { where: { id: id }};
+		let condition = { where: { id } };
 
 		// Update the comments value of the specified movie
 		// and response with the number of affected rows
@@ -71,7 +66,7 @@
 		// Store the id value from the request url
 		let { id } = request.params;
 
-		let condition = { where: { id: id }};
+		let condition = { where: { id } };
 
 		// Delete the specified movie and return the number of
 		// affected rows

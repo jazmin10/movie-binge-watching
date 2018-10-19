@@ -1,7 +1,7 @@
 // ====================== MOVIE MODEL ======================
 
 	module.exports = (sequelize, DataTypes) => {
-		let Movie = sequelize.define("Movie", {
+		let Movie = sequelize.define(`Movie`, {
 			title: {
 				type: DataTypes.STRING,
 				allowNull: false
@@ -22,7 +22,7 @@
 			comments: {
 				type: DataTypes.STRING,
 				allowNull: false,
-				defaultValue: "None"
+				defaultValue: `None`
 			}
 		});
 

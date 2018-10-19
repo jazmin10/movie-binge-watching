@@ -1,7 +1,7 @@
 // ====================== GLOBAL VARIABLES ======================
 
 	// Import modules
-	let db = require("../models/index.js");
+	let db = require(`../models/index.js`);
 
 	// Store Movie model
 	let Movie = db.Movie;
@@ -54,7 +54,7 @@
 		let { id } = request.params;
 
 		if (!comments) {
-			comments = "None";
+			comments = `None`;
 		}
 
 		let newValue = { comments: comments };
@@ -85,27 +85,27 @@
 	module.exports = app => {
 
 		// Finds all movies in the db
-		app.get("/api/all", (allReq, allResp) => {
+		app.get(`/api/all`, (allReq, allResp) => {
 			allMovies(allResp);
 		});
 
 		// Adds a movie to the db
-		app.post("/api/new", (newReq, newResp) => {
+		app.post(`/api/new`, (newReq, newResp) => {
 			addMovie(newReq, newResp);
 		});
 
 		// Updates the viewed value of a specific movie in the db
-		app.put("/api/view/:id", (updtReq, updtResp) => {
+		app.put(`/api/view/:id`, (updtReq, updtResp) => {
 			updateView(updtReq, updtResp);
 		});
 
 		// Updates comments of a specific movie in the db
-		app.put("/api/comments/:id", (updtReq, updtResp) => {
+		app.put(`/api/comments/:id`, (updtReq, updtResp) => {
 			updateComments(updtReq, updtResp);
 		});
 
 		// Deletes a movie from the db
-		app.delete("/api/delete/:id", (rmvReq, rmvResp) => {
+		app.delete(`/api/delete/:id`, (rmvReq, rmvResp) => {
 			removeMovie(rmvReq, rmvResp);
 		});
 	};

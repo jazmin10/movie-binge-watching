@@ -5,16 +5,16 @@ $(document).ready(() => {
 	let movieSearch = event => {
 		event.preventDefault();
 		
-		let userInput = $("#movie-input").val().trim();
+		let userInput = $(`#movie-input`).val().trim();
 
 		// If a blank form was entered, then mark input form "red"
-		if (userInput === "") {
-			$("#movie-input").addClass("form-error");
+		if (userInput === ``) {
+			$(`#movie-input`).addClass(`form-error`);
 		}
 		// Otherwise, if a value was entered, then start the search
 		else {
-			$("#movie-input").val("");
-			userInput = userInput.replace(/ /g, "+"); // replace " " with "+"
+			$(`#movie-input`).val(``);
+			userInput = userInput.replace(/ /g, `+`); // replace " " with "+"
 
 			searchMovie(userInput);
 		}
@@ -22,30 +22,30 @@ $(document).ready(() => {
 
 	// Removes the form-error class (the class displays the field in red)
 	let formFocus = () => {
-		$("#movie-input").removeClass("form-error");
+		$(`#movie-input`).removeClass(`form-error`);
 	};
 
 	// Send request to OMDB API to obtain movie search results
 	let searchMovie = movieName => {
 		$.ajax({
 			url: `http://www.omdbapi.com/?apikey=4b1d9a31&type=movie&r=json&page=1&s=${movieName}`,
-			method: "GET"
+			method: `GET`
 		}).then(response => {
 			// If we obtain results, then display the movie results
 			displaySearchResults(response);
 		}).catch(err => {
 			// If an error occurred, then alert user
-			alert("Oops! Something went wrong");
+			alert(`Oops! Something went wrong`);
 		});
 	};
 
 	// Displays up to three search results in the modal
 	let displaySearchResults = movieResults => {
-		$("#results-modal .modal-body").empty();
+		$(`#results-modal .modal-body`).empty();
 
 		// If search results are returned, then display 
 		// movies' title, poster, and add button
-		if (movieResults.Response === "True") {
+		if (movieResults.Response === `True`) {
 			let movies = movieResults.Search;
 			let movieCount = movies.length;
 
@@ -54,38 +54,38 @@ $(document).ready(() => {
 				movieCount = 3;
 			}
 
-			let row = $("<div>");
-			row.addClass("row");
+			let row = $(`<div>`);
+			row.addClass(`row`);
 
 			for (var i = 0; i < movieCount; i++) {
 				
 				// Create html elements
-				let movieDiv = $("<div>");
-				let titleDiv = $("<h5>");
-				let imgTag = $("<img>");
-				let button = $("<button>");
+				let movieDiv = $(`<div>`);
+				let titleDiv = $(`<h5>`);
+				let imgTag = $(`<img>`);
+				let button = $(`<button>`);
 
 				// Adding classes
 				movieDiv.addClass(`movie-result col-md-${12 / movieCount}`);
-				button.addClass("btn btn-primary add-movie");
+				button.addClass(`btn btn-primary add-movie`);
 
 				// Adding attributes to html tags
-				if (movies[i].Poster === "N/A") {
+				if (movies[i].Poster === `N/A`) {
 					// placeholder picture
-					imgTag.attr("src", "https://www.movieinsider.com/images/none_175px.jpg");
+					imgTag.attr(`src`, `https://www.movieinsider.com/images/none_175px.jpg`);
 				}
 				else {
-					imgTag.attr("src", movies[i].Poster);
+					imgTag.attr(`src`, movies[i].Poster);
 				}
 				
-				imgTag.attr("alt", "No movie poster found");
-				button.attr("data-title", movies[i].Title);
-				button.attr("data-year", movies[i].Year);
-				button.attr("data-img", movies[i].Poster);
+				imgTag.attr(`alt`, `No movie poster found`);
+				button.attr(`data-title`, movies[i].Title);
+				button.attr(`data-year`, movies[i].Year);
+				button.attr(`data-img`, movies[i].Poster);
 
 				// Add text 
 				titleDiv.text(movies[i].Title);
-				button.text("Add");
+				button.text(`Add`);
 
 				// Append elements
 				movieDiv.append(titleDiv)
@@ -95,34 +95,34 @@ $(document).ready(() => {
 				row.append(movieDiv);
 			}
 
-			$("#results-modal .modal-body").append(row);
+			$(`#results-modal .modal-body`).append(row);
 		}
 		// If a response was returned, but that response has no search results... 
 		else {
-			$("#results-modal .modal-body").html("<h4>No results. Try again.</h4>");
+			$(`#results-modal .modal-body`).html(`<h4>No results. Try again.</h4>`);
 		}
 
 		// Show the modal
-		$("#results-modal").modal("toggle");
+		$(`#results-modal`).modal(`toggle`);
 	};
 
 	// Save new movie to the list of saved movies in the database
 	let addMovie = (event) => {
 		
 		let movieInfo = {
-			title: $(event.target).attr("data-title"),
-			year: $(event.target).attr("data-year"),
-			img: $(event.target).attr("data-img")
+			title: $(event.target).attr(`data-title`),
+			year: $(event.target).attr(`data-year`),
+			img: $(event.target).attr(`data-img`)
 		};
 
 		$.ajax({
-			url: "/api/new",
-			method: "POST",
-			contentType: "application/json",
+			url: `/api/new`,
+			method: `POST`,
+			contentType: `application/json`,
 			data: JSON.stringify(movieInfo)
 		}).then(response => {
 			// and then hide modal and grab new list of movies saved
-			$("#results-modal").modal("hide");
+			$(`#results-modal`).modal(`hide`);
 			moviesSaved();
 		});
 
@@ -131,8 +131,8 @@ $(document).ready(() => {
 	// Retrieve list of saved movies from database
 	let moviesSaved = () => {
 		$.ajax({
-			url: "/api/all",
-			method: "GET"
+			url: `/api/all`,
+			method: `GET`
 		}).then(response => {
 			// and then display list of saved movies
 			displaySavedMovies(response);
@@ -185,13 +185,13 @@ $(document).ready(() => {
 		let fullCard = beginningCard.concat(restOfCard);
 
 		// Join array elements into a string
-		return fullCard.join("");
+		return fullCard.join(``);
 
 	};
 
 	// Display list of saved movies
 	let displaySavedMovies = movies => {
-		$("#movies-saved-list").empty();
+		$(`#movies-saved-list`).empty();
 
 		// Display list of movies by...
 		for (var i = 0; i < movies.length; i++) {
@@ -199,11 +199,11 @@ $(document).ready(() => {
 			// creating a row for every two movies OR
 			// creating a row everytime you hit an even number
 			if (i % 2 === 0) {
-				let row = $("<div>");
+				let row = $(`<div>`);
 				// give each row a number starting with 0
 				row.addClass(`row row-${Math.floor(i / 2)}`);
 
-				$("#movies-saved-list").append(row);
+				$(`#movies-saved-list`).append(row);
 			}
 
 			// create movie card component for each movie
@@ -218,12 +218,12 @@ $(document).ready(() => {
 	// Updates movie's watch/unwatched status along with check mark
 	let movieViewStatus = (event) => {
 		
-		let viewedStatus = $(event.target).attr("data-viewed");
-		let movieId = $(event.target).attr("data-id");
+		let viewedStatus = $(event.target).attr(`data-viewed`);
+		let movieId = $(event.target).attr(`data-id`);
 
 		// Turn viewedStatus value to a boolean and 
 		// to the new viewed value it needs to be updated to
-		if (viewedStatus === "true") {
+		if (viewedStatus === `true`) {
 			viewedStatus = false;
 		}
 		else {
@@ -236,21 +236,21 @@ $(document).ready(() => {
 
 		$.ajax({
 			url: `/api/view/${movieId}`,
-			method: "PUT",
+			method: `PUT`,
 			data: movieUpdate
 		}).then(response => {
 			// and then update the "data-viewed" attribute to the new viewed value
-			$(event.target).attr("data-viewed", viewedStatus.toString());	
+			$(event.target).attr(`data-viewed`, viewedStatus.toString());	
 
 			// if the movie was watched, then add "watched" class (turn icon green)
 			if (viewedStatus) {
-				$(event.target).addClass("watched");
-				$(event.target).attr("title", "watch");
+				$(event.target).addClass(`watched`);
+				$(event.target).attr(`title`, `watch`);
 			}
 			// otherwise, remove class (turn icon black)
 			else {
-				$(event.target).removeClass("watched");
-				$(event.target).attr("title", "watched");
+				$(event.target).removeClass(`watched`);
+				$(event.target).attr(`title`, `watched`);
 			}
 		});
 	};
@@ -261,11 +261,11 @@ $(document).ready(() => {
 		// have various elements within the button tag
 		// event.currentTag: the current DOM element within the event bubbling phase
 		// event.target: the DOM element that initiated the event
-		let movieId = $(event.currentTarget).attr("data-id");
+		let movieId = $(event.currentTarget).attr(`data-id`);
 
 		$.ajax({
 			url: `/api/delete/${movieId}`,
-			method: "DELETE"
+			method: `DELETE`
 		}).then(response => {
 			// and then update list of saved movies
 			moviesSaved();
@@ -279,7 +279,7 @@ $(document).ready(() => {
 		// Store the targeted movie's .info-section div
 		let movieInfoSection = comments.parent();
 		// Target the textarea tag of the .info-section
-		let commentsEditing = movieInfoSection.children(".edit-comments");
+		let commentsEditing = movieInfoSection.children(`.edit-comments`);
 
 		// Hide the comments...
 		comments.hide();
@@ -300,12 +300,12 @@ $(document).ready(() => {
 			let newComments = {
 				comments: $(event.target).val().trim()
 			};
-			let movieId = $(event.target).attr("data-id");
+			let movieId = $(event.target).attr(`data-id`);
 			
 			$.ajax({
 				url: `/api/comments/${movieId}`,
 				method: `PUT`,
-				contentType: "application/json",
+				contentType: `application/json`,
 				data: JSON.stringify(newComments)
 			}).then(moviesSaved);
 		}
@@ -317,27 +317,27 @@ $(document).ready(() => {
 	moviesSaved();
 
 	// When the search form is submitted...
-	$("#search-form .btn").on("click", movieSearch);
+	$(`#search-form .btn`).on(`click`, movieSearch);
 
 	// When the input field in the search form is focused...
-	$("#movie-input").focus(formFocus);
+	$(`#movie-input`).focus(formFocus);
 
 	// When an add button is clicked in the search results modal...
-	$("#search-results").on("click", ".add-movie", addMovie);
+	$(`#search-results`).on(`click`, `.add-movie`, addMovie);
 
 	// When a check mark icon on the list of saved movies is clicked...
-	$("#movies-saved-list").on("click", ".viewed-icon", movieViewStatus);
+	$(`#movies-saved-list`).on(`click`, `.viewed-icon`, movieViewStatus);
 
 	// When a remove button on the list of saved movies is clicked...
-	$("#movies-saved-list").on("click", ".remove-movie", removeMovie);
+	$(`#movies-saved-list`).on(`click`, `.remove-movie`, removeMovie);
 
 	// When a comments section on the list of saved movies is clicked...
-	$("#movies-saved-list").on("click", ".comments-text", editComments);
+	$(`#movies-saved-list`).on(`click`, `.comments-text`, editComments);
 
 	// When a key is pressed and released in the comments' edit form...
-	$("#movies-saved-list").on("keyup", ".edit-comments", finishEditingComments);
+	$(`#movies-saved-list`).on(`keyup`, `.edit-comments`, finishEditingComments);
 
 	// When the comments' edit form is unfocused...
-	$("#movies-saved-list").on("blur", ".edit-comments", moviesSaved);
+	$(`#movies-saved-list`).on(`blur`, `.edit-comments`, moviesSaved);
 
 });

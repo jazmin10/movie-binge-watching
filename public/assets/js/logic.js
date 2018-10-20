@@ -39,6 +39,31 @@ $(document).ready(() => {
 		});
 	};
 
+	let createResultDiv = (movieInfo, rowNumber) => {
+		let beginningCard = [
+			`<div class="movie-result col-md-${rowNumber}">`,
+			`<h5>${movieInfo.Title}</h5>`,
+		];
+
+		if (movieInfo.Poster === `N/A`) {
+			beginningCard.push(`<img src="https://www.movieinsider.com/images/none_175px.jpg"
+				alt="No movie poster found">`);
+		}
+		else {
+			beginningCard.push(`<img src=${movieInfo.Poster} alt="No movie poster found">`);
+		}
+
+		let restOfCard = [
+			`<button class="btn btn-primary add-movie" data-title=${movieInfo.Title} 
+			data-year=${movieInfo.Year} data-img=${movieInfo.Poster}>Add</button>`,
+			`</div>`
+		];
+
+		let fullSearchResult = beginningCard.concat(restOfCard);
+
+		return fullSearchResult.join(``);
+	};
+
 	// Displays up to three search results in the modal
 	let displaySearchResults = (movieResults, maxResults = 3) => {
 		$(`#results-modal .modal-body`).empty();
@@ -59,40 +84,8 @@ $(document).ready(() => {
 			row.addClass(`row`);
 
 			for (var i = 0; i < movieCount; i++) {
-				
-				// Create html elements
-				let movieDiv = $(`<div>`);
-				let titleDiv = $(`<h5>`);
-				let imgTag = $(`<img>`);
-				let button = $(`<button>`);
 
-				// Adding classes
-				movieDiv.addClass(`movie-result col-md-${12 / movieCount}`);
-				button.addClass(`btn btn-primary add-movie`);
-
-				// Adding attributes to html tags
-				if (movies[i].Poster === `N/A`) {
-					// placeholder picture
-					imgTag.attr(`src`, `https://www.movieinsider.com/images/none_175px.jpg`);
-				}
-				else {
-					imgTag.attr(`src`, movies[i].Poster);
-				}
-				
-				imgTag.attr(`alt`, `No movie poster found`);
-				button.attr(`data-title`, movies[i].Title);
-				button.attr(`data-year`, movies[i].Year);
-				button.attr(`data-img`, movies[i].Poster);
-
-				// Add text 
-				titleDiv.text(movies[i].Title);
-				button.text(`Add`);
-
-				// Append elements
-				movieDiv.append(titleDiv)
-								.append(imgTag)
-								.append(button);
-
+				let movieDiv = createResultDiv(movies[i], 12 / movieCount);
 				row.append(movieDiv);
 			}
 

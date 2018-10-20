@@ -154,6 +154,30 @@ $(document).ready(() => {
 				title="watched" data-id=${currentMovie.id} data-viewed=${currentMovie.viewed.toString()}></i>`);
 		}
 
+		// let restOfCard = [
+		// 	`</div>`,
+		// 	`<div class="poster-section">`,
+		// 	`<img src=${currentMovie.img}>`,
+		// 	`</div>`,
+		// 	`<div class="info-section">`,
+		// 	`<h3>${currentMovie.title}</h3>`,
+		// 	`<p>Comments:</p>`,
+		// 	`<textarea type="text" class="form-control edit-comments" 
+		// 		style="display: none;" rows="3" data-id=${currentMovie.id}></textarea>`,
+		// 	`<p title="edit" class="comments-text">${currentMovie.comments}</p>`,
+		// 	`<button class="btn btn-secondary remove-movie" type="button" data-id=${currentMovie.id}>`,
+		// 	`<i class="fas fa-trash-alt"></i>`,
+		// 	`<span>Remove</span>`,
+		// 	`</button>`,
+		// 	`</div>`,
+		// 	`</div>`,
+		// 	`</div>`,
+		// 	`</div>`
+		// ];
+
+
+
+		// ===== TEST =====
 		let restOfCard = [
 			`</div>`,
 			`<div class="poster-section">`,
@@ -164,6 +188,8 @@ $(document).ready(() => {
 			`<p>Comments:</p>`,
 			`<textarea type="text" class="form-control edit-comments" 
 				style="display: none;" rows="3" data-id=${currentMovie.id}></textarea>`,
+			`<button class="btn btn-primary save-comments" style="display: none;">Save</button>`,
+			`<button class="btn btn-secondary cancel-edits" style="display: none;">Cancel</button>`,
 			`<p title="edit" class="comments-text">${currentMovie.comments}</p>`,
 			`<button class="btn btn-secondary remove-movie" type="button" data-id=${currentMovie.id}>`,
 			`<i class="fas fa-trash-alt"></i>`,
@@ -174,6 +200,8 @@ $(document).ready(() => {
 			`</div>`,
 			`</div>`
 		];
+
+		// ===================
 
 		// concatenate the beginningCard array and the restOfCard array
 		let fullCard = beginningCard.concat(restOfCard);
@@ -267,43 +295,91 @@ $(document).ready(() => {
 	};
 
 	// Displays comments' edit form of a movie
+	// let editComments = event => {
+	// 	// Store the p tag of the comments selected
+	// 	let comments = $(event.target);
+	// 	// Store the targeted movie's .info-section div
+	// 	let movieInfoSection = comments.parent();
+	// 	// Target the textarea tag of the .info-section
+	// 	let commentsEditing = movieInfoSection.children(`.edit-comments`);
+
+	// 	// Hide the comments...
+	// 	comments.hide();
+
+	// 	// And display the textarea focused with the comments
+	// 	commentsEditing.val(comments.text());
+	// 	commentsEditing.show();
+	// 	commentsEditing.focus();
+
+	// };
+
+
+	// Displays comments' edit form of a movie
 	let editComments = event => {
 		// Store the p tag of the comments selected
 		let comments = $(event.target);
 		// Store the targeted movie's .info-section div
 		let movieInfoSection = comments.parent();
-		// Target the textarea tag of the .info-section
+		// Target the textarea tag, remove movie button, save comments button,
+		// and cancel edits button
 		let commentsEditing = movieInfoSection.children(`.edit-comments`);
+		let removeMovieBtn = movieInfoSection.children(`.remove-movie`);
+		let saveCommentsBtn = movieInfoSection.children(`.save-comments`);
+		let cancelEditsBtn = movieInfoSection.children(`.cancel-edits`);
 
-		// Hide the comments...
+		// Hide comments and remove movie button
 		comments.hide();
+		removeMovieBtn.hide();
 
-		// And display the textarea focused with the comments
+		// Display edit comments form along with save and cancel buttons
 		commentsEditing.val(comments.text());
 		commentsEditing.show();
 		commentsEditing.focus();
-
+		saveCommentsBtn.show();
+		cancelEditsBtn.show();
 	};
 
 	// Save new comments after editing is finished
-	let finishEditingComments = event => {
+	// let finishEditingComments = event => {
 
-		// When a user presses "enter" key is released...
-		if (event.keyCode === 13) {
-			// Store new comments
-			let newComments = {
-				comments: $(event.target).val().trim()
-			};
-			let movieId = $(event.target).attr(`data-id`);
+	// 	// When a user presses "enter" key is released...
+	// 	if (event.keyCode === 13) {
+	// 		// Store new comments
+	// 		let newComments = {
+	// 			comments: $(event.target).val().trim()
+	// 		};
+	// 		let movieId = $(event.target).attr(`data-id`);
 			
-			$.ajax({
-				url: `/api/comments/${movieId}`,
-				method: `PUT`,
-				contentType: `application/json`,
-				data: JSON.stringify(newComments)
-			}).then(moviesSaved);
-		}
+	// 		$.ajax({
+	// 			url: `/api/comments/${movieId}`,
+	// 			method: `PUT`,
+	// 			contentType: `application/json`,
+	// 			data: JSON.stringify(newComments)
+	// 		}).then(moviesSaved);
+	// 	}
+	// };
+
+	// Save new comments after editing is finished
+	let finishEditingComments = event => {
+		let movieInfoSection = $(event.target).parent();
+
+		// Store new comments in the db
+		let newComments = {
+			comments: movieInfoSection.children(`.edit-comments`).val().trim()
+		};
+		let movieId = movieInfoSection.children(`.edit-comments`).attr(`data-id`);
+		
+		$.ajax({
+			url: `/api/comments/${movieId}`,
+			method: `PUT`,
+			contentType: `application/json`,
+			data: JSON.stringify(newComments)
+		}).then(moviesSaved);
+
 	};
+
+
+
 
 // ====================== MAIN PROCESSES ======================
 
@@ -326,12 +402,15 @@ $(document).ready(() => {
 	$(`#movies-saved-list`).on(`click`, `.remove-movie`, removeMovie);
 
 	// When a comments section on the list of saved movies is clicked...
-	$(`#movies-saved-list`).on(`click`, `.comments-text`, editComments);
+	// $(`#movies-saved-list`).on(`click`, `.comments-text`, editComments);
+	$(`#movies-saved-list`).on(`click`, `.comments-text`, editCommentsTest);
 
 	// When a key is pressed and released in the comments' edit form...
-	$(`#movies-saved-list`).on(`keyup`, `.edit-comments`, finishEditingComments);
+	// $(`#movies-saved-list`).on(`keyup`, `.edit-comments`, finishEditingComments);
+	$(`#movies-saved-list`).on(`click`, `.save-comments`, finishEditingCommentsTest);
 
 	// When the comments' edit form is unfocused...
-	$(`#movies-saved-list`).on(`blur`, `.edit-comments`, moviesSaved);
+	// $(`#movies-saved-list`).on(`blur`, `.edit-comments`, moviesSaved);
+	$(`#movies-saved-list`).on(`click`, `.cancel-edits`, moviesSaved);
 
 });

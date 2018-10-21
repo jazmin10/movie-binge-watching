@@ -403,11 +403,11 @@ $(document).ready(() => {
 
 	// When a comments section on the list of saved movies is clicked...
 	// $(`#movies-saved-list`).on(`click`, `.comments-text`, editComments);
-	$(`#movies-saved-list`).on(`click`, `.comments-text`, editCommentsTest);
+	$(`#movies-saved-list`).on(`click`, `.comments-text`, editComments);
 
 	// When a key is pressed and released in the comments' edit form...
 	// $(`#movies-saved-list`).on(`keyup`, `.edit-comments`, finishEditingComments);
-	$(`#movies-saved-list`).on(`click`, `.save-comments`, finishEditingCommentsTest);
+	$(`#movies-saved-list`).on(`click`, `.save-comments`, finishEditingComments);
 
 	// When the comments' edit form is unfocused...
 	// $(`#movies-saved-list`).on(`blur`, `.edit-comments`, moviesSaved);
